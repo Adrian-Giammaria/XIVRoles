@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Final Fantasy XIV Healer Actions Updated for Patch 5.45</title>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.0.0-alpha2/js/bootstrap.bundle.min.js" integrity="sha384-BOsAfwzjNJHrJ8cZidOg56tcQWfp6y72vEJ8xQ9w6Quywb24iOsW913URv1IS4GD" crossorigin="anonymous"></script>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/5.0.0-alpha2/css/bootstrap.min.css" integrity="sha384-DhY6onE6f3zzKbjUPRc2hOzGAdEf4/Dz+WJwBvEYL/lkkIsI3ihufq9hk9K4lVoK" crossorigin="anonymous">
+  <style> body { font-family: sans-serif; text-align: center; } </style>
+</head>
+<body>
+<h1>Final Fantasy XIV Healer Actions</h1>
+<p>This is a frontend for displaying Healer Class Job Actions from Final Fantasy XIV, updated for patch 5.45: Futures Rewritten.</p>
+<p>Note: Icons of the same action with a silver border are enhanced versions of that action which replace the base versions after certain character levels.</p>
+<div id="job">
+  <button type="button" onClick="jobChange('astrologian')" class="btn btn-primary">Astrologian</button>
+  <button type="button" onClick="jobChange('scholar')" class="btn btn-primary">Scholar</button>
+  <button type="button" onClick="jobChange('whitemage')" class="btn btn-primary">White Mage</button>
+</br>
+</br>
+</div>
+<div id="profile"></div>
+<div id="download"></div>
+<div id="errors"></div>
+
+
+<script>
+
+var selectedJob = "astrologian";
+function jobChange(choice){
+  selectedJob = choice;
+  //alert("switching to " + choice); //debugging line to test whether or not the variable was changed
+  fetchActions().then(data => {
+      if (data){
+        display( data )
+      //  download( data )
+      }
+  })
+
+}
+// Read more about JavaScript Fetch here:
+// https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API/Using_Fetch
+
+const fetchActions = async () => {
+  let response = await fetch(selectedJob)
+///  console.log(response)
+  if (response.ok){
+    var element = document.getElementById("profile");
+    element.innerHTML = "";
+    return response.json() }
+  else{
+    var p = document.createElement("p");
+    p.innerHTML = response.url + '<br/>' +
+      "Error: " + response.status;
+    document.querySelector('#errors').appendChild(p);
+  }
+}
+
+const display = (jsonArray) => {
+    console.log(jsonArray)
+    for (json of jsonArray){
+
+
+   var d = document.createElement("div");
+    d.innerHTML =
+      '<h3>' + json.Name + '</h3>' +
+      '<img src="https://xivapi.com' + json.Icon +'"/>' +
+      '<p>ID: ' + json.ID + '</p>';
+    document.querySelector('#profile').appendChild(d);
+  }
+}
+
+const download = (json) => {
+    var a = document.createElement("a");
+    a.innerHTML = "Download JSON for " + json.name;
+    var file = new Blob([JSON.stringify(json)], {type: 'application/json'});
+    a.href = URL.createObjectURL(file);
+    a.download = json.name + '_data.json';
+    document.querySelector('#download').appendChild(a);
+}
+
+fetchActions().then(data => {
+    if (data){
+      display( data )
+    //  download( data )
+    }
+})
+
+</script>
+
+<p>Made by Adrian Giammaria using Bootstrap and Bootswatch</p>
+
+</body>
+</html>
