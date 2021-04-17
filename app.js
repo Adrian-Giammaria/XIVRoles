@@ -113,6 +113,6 @@ app.get('/XIVRoleAPI/whitemage/', (req, res) => { //get request for white mage j
   });
 }); //end white mage request
 
-  app.listen(0, () => {
+  app.listen(6000, "localhost", () => {
    console.log("We are live." );
  });
